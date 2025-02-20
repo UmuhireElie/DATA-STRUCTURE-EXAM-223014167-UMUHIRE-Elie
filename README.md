@@ -7,6 +7,7 @@ THIS IS A DETAILED EXPLANATION OF EACH LINE OF THE ENTILE PROGRAM THAT FOLLOWS:
 5.	return 0;: This line ends the main function and tells the computer the program ran successfully.
 6.	}: This closing brace marks the end of the main function.
 In short: This program prints "Hello, World!" to the screen.
+
 Example 2
 1.	#include <iostream>: This line includes a library for input and output.
 2.	using namespace std;: This line lets us use standard commands without std::.
@@ -22,6 +23,7 @@ Example 2
 12.	return 0;: This line ends the main function.
 13.	}: This closing brace marks the end of the main function.
 In short: This program prints the values of different types of variables.
+
 Example 3
 1.	#include <iostream>: This line includes a library for input and output.
 2.	using namespace std;: This line lets us use standard commands without std::.
@@ -36,6 +38,7 @@ Example 3
 11.	return 0;: This line ends the main function.
 12.	}: This closing brace marks the end of the main function.
 In short: This program asks for the user's name and age and then displays a message with that information.
+
 Example 4
 1.	int a = 10, b = 3;: This line creates two integer variables a and b with values 10 and 3.
 2.	cout << "Sum: " << a + b << endl;: This line shows the sum of a and b.
@@ -44,6 +47,7 @@ Example 4
 5.	cout << "Quotient: " << a / b << endl;: This line shows the quotient of a divided by b.
 6.	cout << "Remainder: " << a % b << endl;: This line shows the remainder when a is divided by b.
 In short: This program performs basic arithmetic operations with two numbers and displays the results.
+
 Example 5
 1.	int age = 18;: This line creates an integer variable called age and sets it to 18.
 2.	if (age >= 18) {: This line checks if age is 18 or older.
