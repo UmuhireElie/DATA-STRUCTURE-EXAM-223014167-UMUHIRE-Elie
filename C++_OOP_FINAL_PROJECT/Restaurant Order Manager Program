@@ -1,0 +1,160 @@
+#include <iostream>
+#include <cstring>
+struct MenuItem {
+    char name[30];
+    float price;
+};
+
+MenuItem menu[20] = {
+    {"Burger", 8.99},
+    {"Pizza", 12.99},
+    {"Salad", 6.49},
+    {"Soda", 1.99}
+};
+int menuSize = 4;
+class Order {
+protected:
+    MenuItem** items; 
+    int nItems;
+    float subtotal;
+    int orderId;
+    static int nextId;
+
+public:
+    Order() : items(NULL), nItems(0), subtotal(0.0f) {
+        orderId = nextId++;
+    }
+
+    virtual ~Order() {
+        delete[] items;
+    }
+
+    virtual float calcTotal() = 0;
+
+    void addItem(int menuIndex) {
+        if (menuIndex < 0 || menuIndex >= menuSize) return;
+
+        MenuItem** newItems = new MenuItem*[nItems + 1];
+
+        for (int i = 0; i < nItems; i++) {
+            *(newItems + i) = *(items + i);
+        }
+
+        *(newItems + nItems) = &menu[menuIndex];
+        subtotal += menu[menuIndex].price;
+
+        delete[] items;
+        items = newItems;
+        nItems++;
+    }
+
+    void print() {
+        std::cout << "Order #" << orderId << ":\n";
+        for (int i = 0; i < nItems; i++) {
+            std::cout << "- " << items[i]->name << " ($" << items[i]->price << ")\n";
+        }
+        std::cout << "Subtotal: $" << subtotal << "\n";
+    }
+
+    int getId() const { return orderId; }
+};
+int Order::nextId = 1;
+class DineInOrder : public Order {
+public:
+    float calcTotal() override {
+        return subtotal * 1.10f; 
+    }
+
+    void print() {
+        Order::print();
+        std::cout << "Service fee (10%): $" << subtotal * 0.10f << "\n";
+        std::cout << "Total: $" << calcTotal() << "\n";
+    }
+};
+
+class DeliveryOrder : public Order {
+public:
+    float calcTotal() override {
+        return subtotal + 5.00f; 
+    }
+
+    void print() {
+        Order::print();
+        std::cout << "Delivery fee: $5.00\n";
+        std::cout << "Total: $" << calcTotal() << "\n";
+    }
+};
+class OrderManager {
+    Order** orders;
+    int orderCount;
+    int capacity;
+
+    void resize() {
+        capacity = capacity ? capacity * 2 : 2;
+        Order** newOrders = new Order*[capacity];
+        for (int i = 0; i < orderCount; i++) {
+            newOrders[i] = orders[i];
+        }
+        delete[] orders;
+        orders = newOrders;
+    }
+
+public:
+    OrderManager() : orders(NULL), orderCount(0), capacity(0) {}
+
+    ~OrderManager() {
+        for (int i = 0; i < orderCount; i++) {
+            delete orders[i];
+        }
+        delete[] orders;
+    }
+
+    void addOrder(Order* order) {
+        if (orderCount == capacity) resize();
+        orders[orderCount++] = order;
+    }
+
+    bool removeOrder(int id) {
+        for (int i = 0; i < orderCount; i++) {
+            if (orders[i]->getId() == id) {
+                delete orders[i];
+                for (int j = i; j < orderCount - 1; j++) {
+                    orders[j] = orders[j + 1];
+                }
+                orderCount--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void printAll() {
+        std::cout << "\n=== ALL ORDERS ===\n";
+        for (int i = 0; i < orderCount; i++) {
+            orders[i]->print();
+            std::cout << "----------------\n";
+        }
+    }
+};
+int main() {
+    std::cout << "MENU:\n";
+    for (int i = 0; i < menuSize; i++) {
+        std::cout << i << ". " << menu[i].name << " ($" << menu[i].price << ")\n";
+    }
+
+    OrderManager manager;
+
+    DineInOrder* dineIn = new DineInOrder();
+    dineIn->addItem(0); 
+    dineIn->addItem(3); 
+    manager.addOrder(dineIn);
+
+    DeliveryOrder* delivery = new DeliveryOrder();
+    delivery->addItem(1); 
+    delivery->addItem(2); 
+    manager.addOrder(delivery);
+
+    manager.printAll();
+
+    return 0;
+}
